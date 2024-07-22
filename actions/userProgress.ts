@@ -11,25 +11,24 @@ export const upsertUserProgress = async (courseId: number) => {
   const { userId } = auth();
   const user = await currentUser();
   if (!userId || !user) throw new Error('Unauthorized');
-  throw new Error('off');
-  // const course = await getCourseById(courseId);
-  // if (!course) throw new Error('Course not found');
-  // const exisitingUserProgress = await getUserProgress();
-  // if (exisitingUserProgress) {
-  //   await db.update(userProgress).set({
-  //     activeCourseId: courseId,
-  //     userName: user.firstName || 'User',
-  //     userImageSrc: user.imageUrl || '/mascot.svg'
-  //   });
-  // } else {
-  //   await db.insert(userProgress).values({
-  //     userId,
-  //     activeCourseId: courseId,
-  //     userName: user.firstName || 'User',
-  //     userImageSrc: user.imageUrl || '/mascot.svg'
-  //   });
-  // }
-  // revalidatePath('/courses');
-  // revalidatePath('/learn');
-  // redirect('/learn');
+  const course = await getCourseById(courseId);
+  if (!course) throw new Error('Course not found');
+  const exisitingUserProgress = await getUserProgress();
+  if (exisitingUserProgress) {
+    await db.update(userProgress).set({
+      activeCourseId: courseId,
+      userName: user.firstName || 'User',
+      userImageSrc: user.imageUrl || '/mascot.svg'
+    });
+  } else {
+    await db.insert(userProgress).values({
+      userId,
+      activeCourseId: courseId,
+      userName: user.firstName || 'User',
+      userImageSrc: user.imageUrl || '/mascot.svg'
+    });
+  }
+  revalidatePath('/courses');
+  revalidatePath('/learn');
+  redirect('/learn');
 };
