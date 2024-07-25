@@ -124,6 +124,7 @@ export const getUnits = cache(async () => {
   });
   const normalizeData = data.map(unit => {
     const lessonsWithCompletedStatus = unit.lessons.map(lesson => {
+      if (lesson.challenges.length === 0) return { ...lesson, completed: false };
       const allCompletedChallenges = lesson.challenges.every(
         challege => {
           return challege.challengeProgress &&
